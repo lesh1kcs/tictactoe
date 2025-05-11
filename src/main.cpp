@@ -1,9 +1,12 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Event.hpp>
+#include "objects/board.hpp"
 
-int main()
-{
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "CMake SFML Project");
-    window.setFramerateLimit(144);
+int main() {
+    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(800u, 600u)), "SFML Board");
+
+    Board board(3, 3);
+    board.setCell(1, 1, 'X');
 
     while (window.isOpen())
     {
@@ -14,8 +17,10 @@ int main()
                 window.close();
             }
         }
-
-        window.clear();
+        window.clear(sf::Color::Black);
+        board.render(window);
         window.display();
     }
+
+    return 0;
 }
