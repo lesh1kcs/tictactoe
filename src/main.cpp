@@ -1,12 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 #include "objects/board.hpp"
+#include <optional>
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(sf::Vector2u(800u, 600u)), "SFML Board");
 
     Board board(3, 3);
-    board.setCell(1, 1, 'X');
+    char currentPlayer = 'X';
 
     while (window.isOpen())
     {
