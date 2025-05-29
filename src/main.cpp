@@ -2,7 +2,5 @@
 #include "scenes/menu.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(800u, 600u)), "Tic-Tac-Toe");
-
-
+    sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Tic-Tac-Toe");
 }
