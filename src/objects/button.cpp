@@ -5,7 +5,7 @@
 
 button::button(sf::RenderWindow& window, const float scale,
     const sf::Vector2f& position, const std::string& idle_path,
-    const std::string& hover_path, const std::string& active_path) : window_(window)
+    const std::string& hover_path, const std::string& active_path) : window_(window), sprite_(*textures_.idle)
 {
     // Load state textures
     textures_.idle = texture_manager::get_texture(idle_path);
@@ -16,11 +16,10 @@ button::button(sf::RenderWindow& window, const float scale,
     sprite_.setPosition(position); // Set the position of the button
     sf::FloatRect bounds = sprite_.getLocalBounds(); // Get the local bounds of the sprite
     sprite_.setScale(sf::Vector2f(scale,scale)); // Set the scale of the sprite
-    sprite_.setOrigin(bounds.width / 2.0f, bounds.height / 2.0f); // Set the origin of the sprite
+    sprite_.setOrigin(sf::Vector2f(bounds.size.x / 2.0f, bounds.size.y / 2.0f)); // Set the origin of the sprite
 
     // Sound buffer is only used to get the duration of the sound
-    sf::SoundBuffer sound_buffer; // Sound buffer for the button
-    sound_buffer.loadFromFile(ASSETS_DIR "/button_click.ogg"); // Load the sound buffer
+    const sf::SoundBuffer sound_buffer(ASSETS_DIR "/button_click.ogg"); // Sound buffer for the button
     sound_duration_ = sound_buffer.getDuration().asMilliseconds(); // Get the duration of the sound buffer
 
     sound_ = sound_manager::get_sound(ASSETS_DIR "/button_click.ogg"); // Obtain the sound pointer
@@ -35,7 +34,8 @@ void button::set_callback(std::function<void()> callback)
 void button::handle_event(const sf::Event& event)
 {
     // Click event
-    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+    if (event.is<sf::Event::MouseButtonPressed>()
+        && event.getIf<sf::Event::MouseButtonPressed>()->button == sf::Mouse::Button::Left) {
         sf::Vector2f mouse = window_.mapPixelToCoords(sf::Mouse::getPosition(window_)); // Get the mouse position
         if (sprite_.getGlobalBounds().contains(mouse)) { // Check if the mouse is inside the button
             sprite_.setTexture(*textures_.active); // Set the texture to the active texture
@@ -43,7 +43,7 @@ void button::handle_event(const sf::Event& event)
     }
 
     // Release event
-    if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+    if (event.is<sf::Event::MouseButtonReleased>() && event.getIf<sf::Event::MouseButtonReleased>()->button == sf::Mouse::Button::Left) {
         sf::Vector2f mouse = window_.mapPixelToCoords(sf::Mouse::getPosition(window_)); // Get the mouse position
         if (sprite_.getGlobalBounds().contains(mouse)) { // Check if the mouse is inside the button
             sprite_.setTexture(*textures_.hover); // Set the texture to the hover texture
@@ -56,7 +56,7 @@ void button::handle_event(const sf::Event& event)
     }
 
     // Hover event
-    if(event.type == sf::Event::MouseMoved) {
+    if(event.is<sf::Event::MouseMoved>()) {
         sf::Vector2f mouse = window_.mapPixelToCoords(sf::Mouse::getPosition(window_)); // Get the mouse position
         if (sprite_.getGlobalBounds().contains(mouse)) { // Check if the mouse is inside the button
             sprite_.setTexture(*textures_.hover); // Set the texture to the hover texture
